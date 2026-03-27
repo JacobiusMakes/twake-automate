@@ -9,11 +9,20 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "dev": "node --watch src/index.js"
+    "dev": "node --watch src/index.js",
+    "test": "node --test 'test/**/*.test.js'"
   },
   "keywords": [
-    "twake", "linagora", "automation", "workflow", "matrix", "jmap",
-    "cozy", "lucie", "ai", "open-source"
+    "twake",
+    "linagora",
+    "automation",
+    "workflow",
+    "matrix",
+    "jmap",
+    "cozy",
+    "lucie",
+    "ai",
+    "open-source"
   ],
   "author": "Jacob <jacob@twake.app>",
   "license": "AGPL-3.0",
