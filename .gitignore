@@ -1,4 +1,7 @@
 node_modules/
+.env
+.env.*
+*.log
 workflows.json
 .DS_Store
 ._*
