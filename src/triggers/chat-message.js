@@ -16,12 +16,22 @@ export class ChatMessageTrigger {
   constructor(config) {
     this.homeserver = config.matrixHomeserver;
     this.token = config.matrixToken;
+    this.userId = config.matrixUserId || null;
+    this.ignoreSelf = config.ignoreSelf !== false; // Default: ignore own messages
     this.since = null;
     this.running = false;
   }
 
   async start(triggerConfigs, emit) {
     this.running = true;
+
+    // Discover our own user ID so we can ignore our own messages (prevent feedback loops)
+    if (!this.userId) {
+      try {
+        const whoami = await this.matrixFetch('/account/whoami');
+        this.userId = whoami.user_id;
+      } catch { /* non-fatal */ }
+    }
 
     // Initial sync to get a since token (don't emit old messages)
     const initRes = await this.matrixFetch(`/sync?timeout=0&filter={"room":{"timeline":{"limit":0}}}`);
@@ -41,7 +51,10 @@ export class ChatMessageTrigger {
         const joinedRooms = sync.rooms?.join || {};
         for (const [roomId, roomData] of Object.entries(joinedRooms)) {
           for (const event of roomData.timeline?.events || []) {
-            if (event.type === "m.room.message" && event.content?.body) {
+            if (event.type === "m.room.message" && event.content?.body
+                && !(this.ignoreSelf && event.sender === this.userId)
+                && !event.content.body.startsWith('\u{1F916}')) {
+              // Skip own messages (unless ignoreSelf=false) and skip bot-prefixed messages to prevent loops
               emit({
                 room: roomId,
                 sender: event.sender,

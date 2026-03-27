@@ -1,0 +1,32 @@
+[
+  {
+    "id": "chat-echo",
+    "name": "Echo chat messages (test workflow)",
+    "enabled": true,
+    "trigger": { "type": "chat:message" },
+    "actions": [
+      {
+        "type": "chat:send",
+        "params": {
+          "room": "!JIdHIALrfERppYiLhI:twake.app",
+          "message": "🤖 Automation detected: {{event.sender}} said '{{event.body}}'"
+        }
+      }
+    ]
+  },
+  {
+    "id": "email-to-chat",
+    "name": "Notify chat when new email arrives",
+    "enabled": false,
+    "trigger": { "type": "mail:new" },
+    "actions": [
+      {
+        "type": "chat:send",
+        "params": {
+          "room": "!JIdHIALrfERppYiLhI:twake.app",
+          "message": "📧 New email from {{event.fromName}}: {{event.subject}}"
+        }
+      }
+    ]
+  }
+]

@@ -50,6 +50,7 @@ const config = {
   openaiUrl: process.env.OPENAI_URL,
   openaiKey: process.env.OPENAI_KEY,
   pollInterval: parseInt(process.env.POLL_INTERVAL || "30") * 1000,
+  ignoreSelf: process.env.ALLOW_SELF !== "1", // Set ALLOW_SELF=1 for single-account testing
 };
 
 // ============================================================

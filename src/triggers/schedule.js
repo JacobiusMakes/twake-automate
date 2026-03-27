@@ -1,12 +1,10 @@
-/**
- * Schedule Trigger — fires on a cron-like schedule.
- *
- * Trigger config:
- *   type: "schedule"
- *   params:
- *     cron: "0 9 * * 1-5"  — weekdays at 9am
- *     cron: "*/5 * * * *"  — every 5 minutes
- */
+// Schedule Trigger — fires on a cron-like schedule.
+//
+// Trigger config:
+//   type: "schedule"
+//   params:
+//     cron: "0 9 * * 1-5"  — weekdays at 9am
+//     cron: "*/5 * * * *"  — every 5 minutes
 
 export class ScheduleTrigger {
   constructor() {
