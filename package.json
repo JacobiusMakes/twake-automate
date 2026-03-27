@@ -1,0 +1,23 @@
+{
+  "name": "twake-automate",
+  "version": "0.1.0",
+  "description": "Automation engine for Twake Workplace — workflows, triggers, and AI-powered actions across chat, mail, and drive",
+  "type": "module",
+  "main": "./src/index.js",
+  "bin": {
+    "twake-automate": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": [
+    "twake", "linagora", "automation", "workflow", "matrix", "jmap",
+    "cozy", "lucie", "ai", "open-source"
+  ],
+  "author": "Jacob <jacob@twake.app>",
+  "license": "AGPL-3.0",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

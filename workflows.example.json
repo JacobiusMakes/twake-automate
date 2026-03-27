@@ -1,0 +1,160 @@
+[
+  {
+    "id": "email-to-chat",
+    "name": "Notify chat when new email arrives",
+    "enabled": true,
+    "trigger": {
+      "type": "mail:new"
+    },
+    "actions": [
+      {
+        "type": "chat:send",
+        "params": {
+          "room": "!yourRoomId:twake.app",
+          "message": "📧 New email from {{event.fromName}} <{{event.from}}>: {{event.subject}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "urgent-email-alert",
+    "name": "AI-classify urgent emails and alert the team",
+    "enabled": true,
+    "trigger": {
+      "type": "mail:new"
+    },
+    "conditions": [
+      {
+        "field": "from",
+        "operator": "not_contains",
+        "value": "noreply"
+      }
+    ],
+    "actions": [
+      {
+        "type": "ai:classify",
+        "id": "urgency",
+        "params": {
+          "prompt": "Is this email urgent? Respond with only 'urgent' or 'normal'.\n\nFrom: {{event.from}}\nSubject: {{event.subject}}\nPreview: {{event.preview}}",
+          "model": "lucie",
+          "outputField": "urgency"
+        }
+      },
+      {
+        "type": "chat:send",
+        "params": {
+          "room": "!alertRoom:twake.app",
+          "message": "🚨 [{{results.urgency.urgency}}] {{event.from}}: {{event.subject}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "file-upload-summary",
+    "name": "Notify team when a file is uploaded to Drive",
+    "enabled": true,
+    "trigger": {
+      "type": "drive:upload"
+    },
+    "actions": [
+      {
+        "type": "chat:send",
+        "params": {
+          "room": "!teamRoom:twake.app",
+          "message": "📁 New file uploaded: {{event.name}} ({{event.size}} bytes)"
+        }
+      }
+    ]
+  },
+  {
+    "id": "deploy-keyword",
+    "name": "Trigger webhook when someone says 'deploy' in chat",
+    "enabled": true,
+    "trigger": {
+      "type": "chat:message",
+      "filter": {
+        "body": "/deploy/"
+      }
+    },
+    "conditions": [
+      {
+        "field": "body",
+        "operator": "matches",
+        "value": "^!deploy"
+      }
+    ],
+    "actions": [
+      {
+        "type": "webhook",
+        "params": {
+          "url": "https://ci.example.com/api/deploy",
+          "body": {
+            "triggered_by": "{{event.sender}}",
+            "message": "{{event.body}}",
+            "room": "{{event.room}}"
+          }
+        }
+      },
+      {
+        "type": "chat:send",
+        "params": {
+          "room": "{{event.room}}",
+          "message": "🚀 Deploy triggered by {{event.sender}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "ai-email-router",
+    "name": "Route emails to topic-specific chat rooms using LUCIE",
+    "enabled": true,
+    "trigger": {
+      "type": "mail:new"
+    },
+    "actions": [
+      {
+        "type": "ai:route",
+        "id": "classify",
+        "params": {
+          "content": "{{event.subject}}: {{event.preview}}",
+          "model": "lucie",
+          "routes": {
+            "finance": "!financeRoom:twake.app",
+            "engineering": "!engRoom:twake.app",
+            "sales": "!salesRoom:twake.app",
+            "support": "!supportRoom:twake.app",
+            "hr": "!hrRoom:twake.app"
+          },
+          "default": "!generalRoom:twake.app"
+        }
+      },
+      {
+        "type": "chat:send",
+        "params": {
+          "room": "{{results.classify.destination}}",
+          "message": "📧 [{{results.classify.category}}] {{event.from}}: {{event.subject}}\n{{event.preview}}"
+        }
+      }
+    ]
+  },
+  {
+    "id": "daily-summary",
+    "name": "Post daily email summary at 9am on weekdays",
+    "enabled": true,
+    "trigger": {
+      "type": "schedule",
+      "params": {
+        "cron": "0 9 * * 1-5"
+      }
+    },
+    "actions": [
+      {
+        "type": "chat:send",
+        "params": {
+          "room": "!standupRoom:twake.app",
+          "message": "☀️ Good morning! Check your Twake Mail inbox for today's emails."
+        }
+      }
+    ]
+  }
+]
